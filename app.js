@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Define Global Variables
   const form = document.getElementById('registrar');
   const input = form.querySelector('input');
   const mainDiv = document.querySelector('.main');
   const ul = document.getElementById('invitedList');
-  
   const div = document.createElement('div');
   const filterLabel = document.createElement('label');
   const filterCheckbox = document.createElement('input');
-  
+
   filterLabel.textContent = "Hide those who haven't responded";
   filterCheckbox.type = 'checkbox';
   div.appendChild(filterLabel);
@@ -55,12 +55,40 @@ document.addEventListener('DOMContentLoaded', () => {
     return li;
   }
   
+  function checkForDuplicate(text) {
+    const listNames = ul.children;
+    let nameDuplicate = false;
+    for (let i = 0; i < listNames.length; i++) {
+      let listName = listNames[i].firstChild;
+      if (listName.tagName === 'SPAN') {
+        if ( listName.textContent.toLowerCase() === text.toLowerCase()) {
+          nameDuplicate = true;
+          alert("Duplicate name detected");
+        }
+      }
+    }
+    return nameDuplicate;
+  }
+
+  function fieldIsBlank(text) {
+    if (text === '') {
+      alert("Field cannot be blank");
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const text = input.value;
-    input.value = '';
-    const li = createLI(text);
-    ul.appendChild(li);
+    if (!fieldIsBlank(text)) {
+      input.value = '';
+      if (!checkForDuplicate(text)) {
+        const li = createLI(text);
+        ul.appendChild(li);
+      }
+    }
   });
   
   ul.addEventListener('change', (e) => {
@@ -96,11 +124,13 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         save: () => {
           const input = li.firstElementChild;
-          const span = document.createElement('span');
-          span.textContent = input.value;
-          li.insertBefore(span, input);
-          li.removeChild(input);
-          button.textContent = 'edit';
+          if (!checkForDuplicate(input.value)) {
+            const span = document.createElement('span');
+            span.textContent = input.value;
+            li.insertBefore(span, input);
+            li.removeChild(input);
+            button.textContent = 'edit';
+          }
         } 
       };
       // select and run action in button's name
