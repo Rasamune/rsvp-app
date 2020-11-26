@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     appendToLI('span', 'textContent', text);
     appendToLI('label', 'textContent', 'Confirm')
       .appendChild(createElement('input', 'type', 'checkbox'));
+    appendToLI('textarea', 'placeholder', 'Notes...');
     appendToLI('button', 'textContent', 'edit');
     appendToLI('button', 'textContent', 'remove');
 
@@ -75,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Loop through all invitee lists
     for (let i = 0; i < listNames.length; i++) {
       let listName = listNames[i].firstChild;
-      // Avoid checking any INPUT fields by filtering SPAN elements
+      // Avoid checking any INPUT fields by filtering SPAN elements only
       if (listName.tagName === 'SPAN') {
         if ( listName.textContent.toLowerCase() === text.toLowerCase()) {
           nameDuplicate = true;
@@ -117,11 +118,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkbox = e.target;
     const checked = checkbox.checked;
     const listItem = checkbox.parentNode.parentNode;
+    const label = checkbox.parentNode;
     
     if (checked) {
       listItem.className = 'responded'; 
+      label.childNodes[0].nodeValue = 'Confirmed';
     } else {
       listItem.className = '';
+      label.childNodes[0].nodeValue = 'Confirm';
     }
   });
 
