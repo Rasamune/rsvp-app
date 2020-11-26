@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Filter Checkbox
   filterLabel.textContent = "Hide those who haven't responded";
   filterCheckbox.type = 'checkbox';
+  filterCheckbox.className = 'filter';
   div.appendChild(filterLabel);
   div.appendChild(filterCheckbox);
   mainDiv.insertBefore(div, ul);
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let li = lis[i];
         if (li.className === 'responded') {
           li.style.display = '';
+          li.querySelector('label').style.display = 'none';
         } else {
           li.style.display = 'none';
         }
@@ -35,9 +37,60 @@ document.addEventListener('DOMContentLoaded', () => {
       for (let i = 0; i < lis.length; i++) {
         let li = lis[i];
         li.style.display = '';
+        li.querySelector('label').style.display = '';
       }
     }
+    saveList();
   });
+
+  // -------------------------------------------
+  // Load Saved List/Variables from LocalStorage
+  function loadList() {
+    const savedList = localStorage.getItem('inviteeList');
+    const filter = localStorage.getItem('filter');
+    if (savedList) {
+      const checkboxArray = JSON.parse(localStorage.getItem('checkboxes'));
+      const textAreaArray = JSON.parse(localStorage.getItem('textAreaMessages'));
+      ul.innerHTML = savedList;
+      document.querySelector('.filter').checked = filter;
+      for (let i = 0; i < ul.children.length; i++) {
+        const li = ul.children[i];
+        if (checkboxArray) {
+          const checkboxStatus = li.querySelector('input[type="checkbox"]');
+          checkboxStatus.checked = checkboxArray[i];
+        }
+        if (textAreaArray){
+          const textAreaMessage = li.querySelector('textarea');
+          textAreaMessage.value = textAreaArray[i];
+        }
+      }
+    }
+  }
+  loadList();
+
+  // -----------------------------------
+  // Save List/Variables to LocalStorage
+  function saveList() {
+    // Save Entire List & its HTML
+    localStorage.setItem('inviteeList', ul.innerHTML);
+    // Save whether filter has been checked
+    localStorage.setItem('filter', document.querySelector('.filter').checked);
+    let checkboxArray = [];
+    let textAreaArray = [];
+    for (let i = 0; i < ul.children.length; i++) {
+      const li = ul.children[i];
+      // Save the Status of each individual Checkbox
+      // Checkbox state is not saved in the List HTML
+      const checkboxStatus = li.querySelector('input[type="checkbox"]');
+      checkboxArray.push(checkboxStatus.checked);
+      localStorage.setItem('checkboxes', JSON.stringify(checkboxArray));
+      // Save contents of Text Area
+      // Text area contents are not saved in the List HTML
+      const textAreaMessage = li.querySelector('textarea');
+      textAreaArray.push(textAreaMessage.value);
+      localStorage.setItem('textAreaMessages', JSON.stringify(textAreaArray));
+    }
+  }
   
   // --------------
   // "Invitee Card" (list object)
@@ -110,6 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ul.appendChild(li);
       }
     }
+    saveList();
   });
   
   // ---------------------
@@ -127,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
       listItem.className = '';
       label.childNodes[0].nodeValue = 'Confirm';
     }
+    saveList();
   });
 
   // --------------------
@@ -167,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       // select and run action in button's name
       nameActions[action]();
+      saveList();
     }
   });
 });
