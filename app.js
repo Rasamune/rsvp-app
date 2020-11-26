@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const checkboxArray = JSON.parse(localStorage.getItem('checkboxes'));
       const textAreaArray = JSON.parse(localStorage.getItem('textAreaMessages'));
       ul.innerHTML = savedList;
-      document.querySelector('.filter').checked = filter;
+      document.querySelector('.filter').checked = JSON.parse(filter);
       for (let i = 0; i < ul.children.length; i++) {
         const li = ul.children[i];
         if (checkboxArray) {
